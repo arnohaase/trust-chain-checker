@@ -1,0 +1,17 @@
+[package]
+name = "trust-chain-checker"
+version = "0.1.0"
+authors = ["Arno Haase <arno.haase@haase-consulting.com>"]
+edition = "2018"
+
+
+[dependencies]
+dirs = "2.0"
+env_logger = "0.7"
+log = "0.4"
+regex = "1.3"
+ring = "0.16"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+structopt = "0.3"
+uuid = {version = "0.8", features = ["v4"]}

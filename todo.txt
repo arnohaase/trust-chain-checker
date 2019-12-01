@@ -1,0 +1,23 @@
+todo
+----
+* sign claims
+* verify claim signatures
+* effective POM adapter
+* npm adapter
+* rust adapter
+* calculate hash code for folder hierarchy
+* trust: key fingerprint => Option<0.0-1.0>
+
+
+info
+----
+* gpg uses SHA-1 for fingerprints
+* key fingerprint (or part of it?) is included in GPG signature
+* gpg --status-fd=1 --verify asdf.asc
+
+links
+-----
+http://branchandbound.net/blog/security/2012/08/verify-dependencies-using-pgp/
+https://tools.ietf.org/html/rfc4880
+http://git.gnupg.org/cgi-bin/gitweb.cgi?p=gnupg.git;a=blob_plain;f=doc/DETAILS
+https://riseup.net/en/security/message-security/openpgp/best-practices
