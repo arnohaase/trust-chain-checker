@@ -21,6 +21,7 @@ use crate::util::*;
 use crate::err::*;
 use std::time::SystemTime;
 use std::fs::File;
+use crate::gpg::PublicKey;
 
 #[derive(Debug,StructOpt)]
 #[structopt(about="The cross-language and cross-platform distributed build dependency verification tool")]
@@ -58,8 +59,11 @@ struct SignOpts {
 
 #[derive(Debug,StructOpt)]
 struct VerifyOpts {
-    #[structopt(name="The hash of the artifact to verify", long="artifact")]
-    artifact: String,
+    #[structopt(name="The id of the artifact to verify", long="artifact")]
+    artifact_id: String,
+
+    #[structopt(name="The file name of the claim to be verified", long="claim-file")]
+    claim_file_name: String,
 }
 
 #[derive(Debug,StructOpt)]
@@ -88,7 +92,10 @@ fn main() -> Result<(), crate::err::TrustChainError> {
             let claim_id = do_sign(&cli_opts, sign_opts)?;
             write_output(&format!("claim id: {}", claim_id));
         },
-        CliOptsCommand::Verify(hash_opts) => panic!("todo"),
+        CliOptsCommand::Verify(verify_opts) => {
+            let key = do_verify(&cli_opts, &verify_opts)?;
+            write_output(&format!("valid signature by {}", &key.fingerprint));
+        },
     }
 
     Ok(())
@@ -113,6 +120,16 @@ fn do_sign(cli_opts: &CliOpts, sign_opts: &SignOpts) -> Result<String, TrustChai
 
     let hash = artifact_repository.do_hash(&sign_opts.artifact_id)?;
     claim_registry.sign_claim(&sign_opts.artifact_id, &hash, &sign_opts.claim_key, sign_opts.claim_value.derefed())
+}
+
+fn do_verify(cli_opts: &CliOpts, verify_opts: &VerifyOpts) -> Result<PublicKey, TrustChainError> {
+    debug!("verifying claim: {:?}", verify_opts);
+
+    let artifact_repository = artifact_repository(&cli_opts);
+    let claim_registry = claim_registry(cli_opts);
+
+    let artifact_hash = artifact_repository.do_hash(&verify_opts.artifact_id)?;
+    claim_registry.verify_claim(&artifact_hash, &verify_opts.claim_file_name)
 }
 
 fn artifact_repository(cli_opts: &CliOpts) -> Arc<ArtifactRepository> {

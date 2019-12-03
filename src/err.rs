@@ -4,10 +4,14 @@ pub enum TrustChainErrorKind {
     ArtifactFolderReadError,
     ArtifactNotFound,
     ArtifactReadError,
+    ClaimNotFound,
     Claims,
+    ExpiredSignature,
+    ExpiredKeySignature,
     Generic,
     Gpg,
     InvalidArtifactId,
+    InvalidSignature,
     Io,
 }
 

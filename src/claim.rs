@@ -13,7 +13,7 @@ use ring::digest::{Digest, Context, SHA256};
 use std::fs::File;
 use std::io::{Read, Error, Write};
 use crate::err::TrustChainError;
-use crate::gpg::{Gpg, SignedFilePath};
+use crate::gpg::{Gpg, SignedFilePath, PublicKey};
 
 pub enum AuthenticatedClaim {
     Positive(PositiveClaimData),
@@ -98,6 +98,7 @@ struct PersistentRevocationData {
 pub trait ClaimRegistry {
     fn sign_claim(&self, artifact_id: &str, artifact_hash: &Digest, claim_key: &str, claim_value: Option<&str>) -> Result<String, TrustChainError>;
     fn revoke_claim(&self, artifact_id: &str, artifact_hash: &Digest, claim_id: &str) -> Result<String, TrustChainError>;
+    fn verify_claim(&self, artifact_hash: &Digest, claim_file_name: &str) -> Result<PublicKey, TrustChainError>;
     fn authenticated_claims_for(&self, artifact: &ArtifactId) -> Result<Box<dyn Iterator<Item=Arc<AuthenticatedClaim>>>, TrustChainError>;
 }
 
@@ -162,7 +163,8 @@ impl ClaimRegistry for FileSystemClaimRegistry {
         Ok(claim_id)
     }
 
-    fn revoke_claim(&self, artifact_id: &str, artifact_hash: &Digest, claim_id: &str) -> Result<String, TrustChainError> {
+    fn revoke_claim(&self, artifact_id: &str, artifact_hash: &Digest, claim_file_name: &str) -> Result<String, TrustChainError> {
+
         // TODO verify that the claim exists and was signed by us
         // TODO check that no revocation exists as yet
 
@@ -173,6 +175,19 @@ impl ClaimRegistry for FileSystemClaimRegistry {
 
         unimplemented!("todo");
     }
+
+    fn verify_claim(&self, artifact_hash: &Digest, claim_file_name: &str) -> Result<PublicKey, TrustChainError> {
+        //TODO check for revocation
+
+        let artifact_folder = self.artifact_folder(artifact_hash, false)?;
+        if !(artifact_folder.exists() && artifact_folder.is_dir()) {
+            return err!(ClaimNotFound, "claim file {} not found for artifact with hash {}", claim_file_name, to_hex_string(artifact_hash.as_ref()));
+        }
+
+        let path = SignedFilePath::new(&artifact_folder, claim_file_name);
+        Gpg::verify(&path)
+    }
+
 
     fn authenticated_claims_for(&self, artifact: &ArtifactId) -> Result<Box<dyn Iterator<Item=Arc<AuthenticatedClaim>>>, TrustChainError> {
         let artifact_folder = self.artifact_folder(&artifact.hash, false)?;

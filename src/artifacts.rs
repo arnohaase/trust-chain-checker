@@ -34,8 +34,6 @@ impl ArtifactRepository {
         match self {
             Maven(repo) => {
                 let path = repo.id_to_path(artifact_id)?;
-
-                debug!("hashing file {:?}", &path);
                 hash_file(&mut context, &path)?;
                 Ok(context.finish())
             }
