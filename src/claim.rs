@@ -11,7 +11,6 @@ use crate::util::to_hex_string;
 use std::sync::Arc;
 use ring::digest::{Digest, Context, SHA256};
 use std::fs::File;
-use std::io::{Read, Error, Write};
 use crate::err::TrustChainError;
 use crate::gpg::{Gpg, SignedFilePath, PublicKey};
 
@@ -164,6 +163,9 @@ impl ClaimRegistry for FileSystemClaimRegistry {
     }
 
     fn revoke_claim(&self, artifact_id: &str, artifact_hash: &Digest, claim_file_name: &str) -> Result<String, TrustChainError> {
+        println!("{:?}", artifact_id);
+        println!("{:?}", artifact_hash);
+        println!("{:?}", claim_file_name);
 
         // TODO verify that the claim exists and was signed by us
         // TODO check that no revocation exists as yet
@@ -230,7 +232,7 @@ fn parse_claim(path: &Path) -> Option<AuthenticatedClaim> {
         return None;
     }
 
-    let mut s = String::new();
+//    let mut s = String::new();
 
     //TODO error handling
     let f = File::open(path).unwrap();

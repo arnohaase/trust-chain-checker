@@ -34,7 +34,7 @@ impl SignedFilePath {
         let sig_file_name: &str = &format!("{}.sig", data_file_name);
 
         let data_path = base_path.join(data_file_name);
-        let mut sig_path = base_path.join(sig_file_name);
+        let sig_path = base_path.join(sig_file_name);
 
         SignedFilePath {
             data_path,

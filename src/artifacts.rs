@@ -2,9 +2,8 @@ use log::*;
 use regex::Regex;
 use ring::digest::{Context, Digest, SHA256};
 use std::fs;
-use std::fs::{File, ReadDir, DirEntry};
-use std::io::{ErrorKind, Read, Error};
-use std::iter::Map;
+use std::fs::{File, DirEntry};
+use std::io::{ErrorKind, Read};
 use std::path::{Path, PathBuf};
 
 use crate::err::*;
@@ -95,7 +94,6 @@ fn hash_folder(context: &mut Context, path: &Path) -> Result<(), TrustChainError
     Ok(())
 }
 
-
 pub struct MavenRepository {
     root: PathBuf,
     regex_id: Regex,
@@ -138,4 +136,8 @@ impl MavenRepository {
 
         Ok(result)
     }
+}
+
+pub struct CargoRepository {
+    root: PathBuf,
 }

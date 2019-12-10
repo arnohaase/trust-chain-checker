@@ -1,4 +1,3 @@
-use std::fmt::Formatter;
 use std::ops::Deref;
 
 pub fn to_hex_string(bytes: &[u8]) -> String {

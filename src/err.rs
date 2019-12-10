@@ -1,5 +1,6 @@
 
 #[derive(Debug)]
+#[allow(dead_code)] //TODO apparently rustc does not notice usage in macros - clean this up anyway: which error kinds do we want to distinguish?
 pub enum TrustChainErrorKind {
     ArtifactFolderReadError,
     ArtifactNotFound,

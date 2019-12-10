@@ -1,13 +1,13 @@
 todo
 ----
-* sign claims
-* verify claim signatures
 * effective POM adapter
 * npm adapter
 * rust adapter
-* calculate hash code for folder hierarchy
 * trust: key fingerprint => Option<0.0-1.0>
 
+* artifact-id or artifact-hash in CLI
+* "list all *my* claims"
+  * optionally by artifact id or artifact hash
 
 info
 ----

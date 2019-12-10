@@ -1,26 +1,20 @@
 #[macro_use] mod err;
 
 mod artifacts;
-mod checker;
 mod claim;
-mod eval;
 mod gpg;
 mod util;
 
-use dirs::*;
 use log::*;
 use structopt::clap::arg_enum;
 use structopt::StructOpt;
 use std::path::PathBuf;
-use crate::checker::Checker;
 use crate::artifacts::ArtifactRepository;
 use std::sync::Arc;
 use crate::util::{to_hex_string, write_output};
 use crate::claim::{ClaimRegistry, FileSystemClaimRegistry};
 use crate::util::*;
 use crate::err::*;
-use std::time::SystemTime;
-use std::fs::File;
 use crate::gpg::PublicKey;
 
 #[derive(Debug,StructOpt)]
@@ -75,7 +69,7 @@ struct HashOpts {
 arg_enum! {
   #[derive(Debug)]
   enum RepositoryKind {
-    maven, npm, cargo,
+    Maven, Npm, Cargo,
   }
 }
 
@@ -134,13 +128,14 @@ fn do_verify(cli_opts: &CliOpts, verify_opts: &VerifyOpts) -> Result<PublicKey, 
 
 fn artifact_repository(cli_opts: &CliOpts) -> Arc<ArtifactRepository> {
     Arc::new(match &cli_opts.repository_kind {
-        RepositoryKind::maven => ArtifactRepository::new_maven(PathBuf::from("/home/arno/.m2/repository")), //TODO make path configurable
-        RepositoryKind::npm => panic!("TODO"),
-        RepositoryKind::cargo => panic!("TODO"),
+        RepositoryKind::Maven => ArtifactRepository::new_maven(PathBuf::from("/home/arno/.m2/repository")), //TODO make path configurable
+        RepositoryKind::Npm => panic!("TODO"),
+        RepositoryKind::Cargo => panic!("TODO"),
     })
 }
 
-fn claim_registry(cli_opty: &CliOpts) -> Arc<dyn ClaimRegistry> {
+fn claim_registry(cli_opts: &CliOpts) -> Arc<dyn ClaimRegistry> {
+    println!("{:?}", cli_opts);
     //TODO make path configurable
     //TODO error handling
 
